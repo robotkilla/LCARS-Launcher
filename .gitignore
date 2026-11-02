@@ -1,0 +1,6 @@
+*.qmlc
+.qmlls.ini
+node_modules/
+*~
+*.swp
+.DS_Store

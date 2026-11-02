@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "id": "wesley.lcars-launcher",
+  "name": "LCARS Launcher",
+  "version": "0.1.0",
+  "author": "Wesley Magnus",
+  "license": "MIT",
+  "description": "TNG LCARS-styled replacement launcher overlay for Omarchy Quattro. Fuzzy app + menu search with classic elbow/pill chrome.",
+  "kinds": ["overlay"],
+  "keepLoaded": true,
+  "entryPoints": {
+    "overlay": "Launcher.qml"
+  }
+}
