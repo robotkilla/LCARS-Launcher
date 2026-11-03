@@ -75,7 +75,7 @@ omarchy plugin remove robotkilla.lcars-launcher
 
 If you added the keybindings above, delete those lines from `~/.config/hypr/bindings.lua` and reload Hyprland. Otherwise those chords still call a plugin that is gone.
 
-Favorites and frecency stay in `~/.local/state/omarchy/lcars-launcher-usage.json`. Delete that file when you want the launcher to forget them.
+Favorites and frecency stay in `~/.local/state/omarchy/lcars-launcher-usage.json`, kept mode `0600`. Delete that file when you want the launcher to forget them.
 
 ## License and dependencies
 
@@ -89,7 +89,7 @@ Nothing else is downloaded. At runtime the overlay uses programs that already sh
 - `uwsm-app` and `gtk-launch`, to start applications
 - `ip`, to read the IPv4 address on the rail
 
-It writes one file, `~/.local/state/omarchy/lcars-launcher-usage.json`.
+It writes one file, `~/.local/state/omarchy/lcars-launcher-usage.json`, and keeps that file mode `0600`.
 
 `Model.test.js` is a source-tree check and needs Node. The running plugin does not.
 

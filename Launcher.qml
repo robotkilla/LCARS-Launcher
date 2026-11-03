@@ -463,6 +463,17 @@ Item {
         usageFile.setText(Model.serializeUsage(root.usage))
     }
 
+    function restrictUsageFile() {
+        // FileView creates the file with the process umask. Keep the
+        // frecency record owner-only, including a copy that already exists.
+        Quickshell.execDetached([
+            "bash", "-c",
+            'f=$1; [ -e "$f" ] || exit 0; m=$(stat -c %a "$f" 2>/dev/null) || exit 0; [ "$m" = 600 ] || chmod 600 -- "$f"',
+            "restrict-usage",
+            root.usagePath
+        ])
+    }
+
     function setActiveMenu(id, pushHistory) {
         if (!root.items[id]) id = "root"
         if (pushHistory && id !== root.activeMenu)
@@ -613,9 +624,11 @@ Item {
         atomicWrites: true
         printErrors: false
         onLoaded: {
+            root.restrictUsageFile()
             root.usage = Model.parseUsage(text())
             if (root.opened) root.rebuildResults()
         }
+        onSaved: root.restrictUsageFile()
         onLoadFailed: root.usage = ({})
         onFileChanged: reload()
     }
