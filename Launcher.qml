@@ -99,7 +99,7 @@ Item {
     }
 
     function pluginId() {
-        return (root.manifest && root.manifest.id) || "wesley.lcars-launcher"
+        return (root.manifest && root.manifest.id) || "robotkilla.lcars-launcher"
     }
 
     function desktopFile(id) {

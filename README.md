@@ -1,6 +1,6 @@
 # LCARS Launcher
 
-Fullscreen launcher for Omarchy Quattro (`wesley.lcars-launcher`). Classic LCARS chrome — wide left rail, elbow caps, and square-cut bars — in the palette from [thelcars.com](https://www.thelcars.com/). It is an `overlay` plugin and runs inside the `omarchy-shell` process that is already on the desktop.
+Fullscreen launcher for Omarchy Quattro (`robotkilla.lcars-launcher`). Classic LCARS chrome — wide left rail, elbow caps, and square-cut bars — in the palette from [thelcars.com](https://www.thelcars.com/). It is an `overlay` plugin and runs inside the `omarchy-shell` process that is already on the desktop.
 
 It walks the same system menu as stock Omarchy, including `~/.config/omarchy/extensions/omarchy-menu.jsonc`, and lists installed applications. Typing searches the menu you are in and everything under it. Favorites and frecency are kept between sessions.
 
@@ -18,7 +18,7 @@ Omarchy asks you to confirm before it clones a plugin. Plugins run unsandboxed, 
 omarchy plugin add https://github.com/robotkilla/LCARS-Launcher.git --enable
 ```
 
-The plugin id is `wesley.lcars-launcher`.
+The plugin id is `robotkilla.lcars-launcher`.
 
 The same install is **Setup › Plugins › Add Plugin**. Paste the repository URL and enable LCARS Launcher when asked.
 
@@ -27,9 +27,9 @@ Installing does not change keybindings, `shell.json`, or anything under `/usr/sh
 ## Open it
 
 ```sh
-omarchy-shell shell toggle wesley.lcars-launcher '{}'
-omarchy-shell shell summon wesley.lcars-launcher '{"menu":"apps"}'
-omarchy-shell shell hide wesley.lcars-launcher
+omarchy-shell shell toggle robotkilla.lcars-launcher '{}'
+omarchy-shell shell summon robotkilla.lcars-launcher '{"menu":"apps"}'
+omarchy-shell shell hide robotkilla.lcars-launcher
 ```
 
 `{}` opens the system menu. `{"menu":"apps"}` opens Apps. `toggle` closes the overlay when it is already open. `hide` always closes it.
@@ -54,11 +54,11 @@ Add this to `~/.config/hypr/bindings.lua` yourself. The plugin never writes that
 ```lua
 -- SUPER+SPACE was the Omarchy menu (omarchy-menu toggle).
 hl.unbind("SUPER + SPACE")
-o.bind("SUPER + SPACE", "LCARS launcher", "omarchy-shell shell toggle wesley.lcars-launcher '{}'")
+o.bind("SUPER + SPACE", "LCARS launcher", "omarchy-shell shell toggle robotkilla.lcars-launcher '{}'")
 
 -- SUPER+ALT+SPACE was the Apps menu (omarchy-menu toggle apps).
 hl.unbind("SUPER + ALT + SPACE")
-o.bind("SUPER + ALT + SPACE", "LCARS launcher", [[omarchy-shell shell toggle wesley.lcars-launcher '{"menu":"apps"}']])
+o.bind("SUPER + ALT + SPACE", "LCARS launcher", [[omarchy-shell shell toggle robotkilla.lcars-launcher '{"menu":"apps"}']])
 ```
 
 Then run `hyprctl reload` and `hyprctl configerrors`.
@@ -68,7 +68,7 @@ Super+Space opens the system menu. Super+Alt+Space opens Apps. Either chord clos
 ## Remove
 
 ```sh
-omarchy plugin remove wesley.lcars-launcher
+omarchy plugin remove robotkilla.lcars-launcher
 ```
 
 **Setup › Plugins › Remove Plugin** does the same thing. Omarchy disables the plugin and deletes the installed copy. A git install leaves the upstream repository in place.
@@ -113,4 +113,4 @@ Before publishing, from the repository root:
 omarchy plugin validate .
 ```
 
-QML saved under `~/.config/omarchy/plugins/wesley.lcars-launcher/` reloads on its own. After a change to `Model.js`, run `omarchy restart shell`.
+QML saved under `~/.config/omarchy/plugins/robotkilla.lcars-launcher/` reloads on its own. After a change to `Model.js`, run `omarchy restart shell`.
