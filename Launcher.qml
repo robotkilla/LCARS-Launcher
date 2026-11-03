@@ -16,6 +16,9 @@ Item {
     property bool opened: false
     property string query: ""
     property int selectedIndex: 0
+    property bool hoverArmed: false
+    property int hoverX: -99999
+    property int hoverY: -99999
     property var usage: ({})
     property var defaultMenuItems: []
     property var userMenuItems: []
@@ -370,7 +373,29 @@ Item {
         root.providersLoaded = next
     }
 
+    function disarmHover() {
+        // The next hover sample is where the pointer already sits.
+        root.hoverArmed = false
+    }
+
+    function hoverRow(index, x, y) {
+        var ix = Math.round(x)
+        var iy = Math.round(y)
+        if (!root.hoverArmed) {
+            root.hoverArmed = true
+            root.hoverX = ix
+            root.hoverY = iy
+            return
+        }
+        if (ix === root.hoverX && iy === root.hoverY)
+            return
+        root.hoverX = ix
+        root.hoverY = iy
+        root.selectedIndex = index
+    }
+
     function rebuildResults(keepSelection) {
+        root.disarmHover()
         root.ensureApps()
         var keepId = keepSelection === false ? "" : root.selectedId()
         var rows = Model.browseRows(root.items, root.itemOrder, root.activeMenu, root.query, root.whenResults, root.checkedResults, root.usage, Date.now())
@@ -1227,7 +1252,7 @@ Item {
                                 favorite: model.favorite
                                 fontFamily: root.lcarsFont
                                 onClicked: root.activateIndex(model.index)
-                                onHovered: root.selectedIndex = model.index
+                                onHovered: function (x, y) { root.hoverRow(model.index, x, y) }
                                 onFavoriteClicked: root.toggleFavoriteIndex(model.index)
                             }
                         }

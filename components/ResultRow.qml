@@ -42,7 +42,7 @@ Item {
     }
 
     signal clicked()
-    signal hovered()
+    signal hovered(real x, real y)
     signal favoriteClicked()
 
     height: root.isSubmenu ? 36 : (root.subtext.length > 0 ? 50 : 40)
@@ -202,7 +202,10 @@ Item {
                 hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor
                 onClicked: root.favoriteClicked()
-                onContainsMouseChanged: if (containsMouse) root.hovered()
+                onPositionChanged: function (mouse) {
+                    var pos = mapToGlobal(mouse.x, mouse.y)
+                    root.hovered(pos.x, pos.y)
+                }
             }
         }
     }
@@ -212,7 +215,12 @@ Item {
         hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
         onClicked: root.clicked()
-        onContainsMouseChanged: if (containsMouse) root.hovered()
+        // A rebuilt row appears under a stationary pointer and reports a
+        // position. The launcher ignores that sample unless the pointer moves.
+        onPositionChanged: function (mouse) {
+            var pos = mapToGlobal(mouse.x, mouse.y)
+            root.hovered(pos.x, pos.y)
+        }
         z: -1
     }
 }
