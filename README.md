@@ -15,10 +15,10 @@ Omarchy Quattro, with `omarchy-shell` running. The plugin installs no packages a
 Omarchy asks you to confirm before it clones a plugin. Plugins run unsandboxed, as your user, inside `omarchy-shell`.
 
 ```sh
-omarchy plugin add https://github.com/<github-user>/LCARS-Launcher.git --enable
+omarchy plugin add https://github.com/robotkilla/LCARS-Launcher.git --enable
 ```
 
-Use the public GitHub repository root, with `.git` and with no extra path. The plugin id is `wesley.lcars-launcher`.
+The plugin id is `wesley.lcars-launcher`.
 
 The same install is **Setup › Plugins › Add Plugin**. Paste the repository URL and enable LCARS Launcher when asked.
 
