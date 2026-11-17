@@ -92,14 +92,14 @@ assert(sysRows.length === 1 && sysRows[0].itemId === "system.lock", "System dril
 
 var guardedJson = M.parseMenuJsonc('{\n'
     + '  "system": {"label":"System"},\n'
-    + '  "system.hibernate": {"label":"Hibernate","when":"false","action":"systemctl hibernate"},\n'
+    + '  "system.hidden": {"label":"Hidden","when":"false","action":"true"},\n'
     + '  "system.lock": {"label":"Lock","when":"true","checked":"true","action":"loginctl lock-session"},\n'
     + '  "system.browser": {"label":"Browser","when":"true","checked":"[[ \\"$(omarchy-default-browser)\\" == \\"firefox\\" ]]","action":"true"}\n'
     + '}\n')
 var guarded = M.mergeMenuSources(guardedJson, [])
 var guardText = M.guardScript(guarded.items, guarded.itemOrder)
 assert(guardText.indexOf("omarchy-pkg-present") >= 0, "guard script includes package helpers")
-assert(guardText.indexOf("system.hibernate:w:") >= 0, "when guard is emitted")
+assert(guardText.indexOf("system.hidden:w:") >= 0, "when guard is emitted")
 assert(guardText.indexOf("system.lock:c:") >= 0, "checked guard is emitted")
 assert(guardText.indexOf('${__omarchy_read_2}') >= 0, "default browser is read through a slot")
 var browserCaptures = guardText.split("__omarchy_read_2=$(omarchy-default-browser ").length - 1
@@ -107,14 +107,14 @@ assert(browserCaptures === 1, "default browser is captured once, got " + browser
 assert(guardText.indexOf("$(omarchy-default-browser)") < 0, "plain reader call is substituted out of the guards")
 var guardOut = require("child_process").execFileSync("bash", ["-lc", guardText], { encoding: "utf8" })
 var guardParsed = M.parseGuardOutput(guardOut)
-assert(guardParsed.whenResults["system.hibernate"] === false, "false when hides")
+assert(guardParsed.whenResults["system.hidden"] === false, "false when hides")
 assert(guardParsed.whenResults["system.lock"] === true, "true when shows")
 assert(guardParsed.checkedResults["system.lock"] === true, "true checked marks")
 var guardedRows = M.browseRows(guarded.items, guarded.itemOrder, "system", "", guardParsed.whenResults, guardParsed.checkedResults, {}, 0)
-assert(!guardedRows.some(function (r) { return r.itemId === "system.hibernate" }), "browse hides a failed when")
+assert(!guardedRows.some(function (r) { return r.itemId === "system.hidden" }), "browse hides a failed when")
 assert(guardedRows.some(function (r) { return r.itemId === "system.lock" && r.label.indexOf("✓") >= 0 }), "browse marks a true checked")
 var unanswered = M.browseRows(guarded.items, guarded.itemOrder, "system", "", {}, {}, {}, 0)
-assert(unanswered.some(function (r) { return r.itemId === "system.hibernate" }), "unanswered when still shows")
+assert(unanswered.some(function (r) { return r.itemId === "system.hidden" }), "unanswered when still shows")
 
 var searchRows = M.browseRows(tree.items, tree.itemOrder, "root", "lock", {}, {}, {}, 0)
 assert(searchRows.some(function (r) { return r.itemId === "system.lock" && r.section === "drilldown" }), "root search lock is a drilldown hit")

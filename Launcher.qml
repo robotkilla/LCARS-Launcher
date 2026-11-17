@@ -32,6 +32,10 @@ Item {
     property var whenResults: ({})
     property var checkedResults: ({})
     property bool guardsPending: false
+    property bool usagePrivate: false
+    property bool usageGuardRunning: false
+    property bool usageDirty: false
+    property bool usageLoaded: false
     property string hostname: ""
     property string clockText: "--:--"
     property string ip0: "--"
@@ -460,16 +464,26 @@ Item {
     }
 
     function saveUsage() {
+        root.usageDirty = true
+        if (!root.usagePrivate) {
+            root.ensureUsagePrivate()
+            return
+        }
+        root.usageDirty = false
         usageFile.setText(Model.serializeUsage(root.usage))
     }
 
-    function restrictUsageFile() {
-        // FileView creates the file with the process umask. Keep the
-        // frecency record owner-only, including a copy that already exists.
-        Quickshell.execDetached([
+    function ensureUsagePrivate() {
+        // FileView saves with QSaveFile. A new file is committed mode 0644,
+        // while an existing file keeps its mode. Make this path 0600 before
+        // any frecency text is written so the first save is never published
+        // world-readable and then chmod'd afterwards.
+        if (root.usagePrivate || root.usageGuardRunning) return
+        root.usageGuardRunning = true
+        usageGuard.exec([
             "bash", "-c",
-            'f=$1; [ -e "$f" ] || exit 0; m=$(stat -c %a "$f" 2>/dev/null) || exit 0; [ "$m" = 600 ] || chmod 600 -- "$f"',
-            "restrict-usage",
+            'umask 077; f=$1; d=$(dirname -- "$f"); mkdir -p -- "$d" || exit 1; if [ ! -e "$f" ]; then : > "$f" || exit 1; fi; m=$(stat -c %a -- "$f") || exit 1; [ "$m" = 600 ] || chmod 600 -- "$f"',
+            "usage-private",
             root.usagePath
         ])
     }
@@ -624,13 +638,31 @@ Item {
         atomicWrites: true
         printErrors: false
         onLoaded: {
-            root.restrictUsageFile()
+            if (root.usageDirty) {
+                root.usageLoaded = true
+                return
+            }
+            if (root.usageLoaded) return
+            root.usageLoaded = true
             root.usage = Model.parseUsage(text())
             if (root.opened) root.rebuildResults()
         }
-        onSaved: root.restrictUsageFile()
-        onLoadFailed: root.usage = ({})
-        onFileChanged: reload()
+        onLoadFailed: {
+            if (!root.usageLoaded && !root.usageDirty) root.usage = ({})
+        }
+        onFileChanged: {
+            if (!root.usageLoaded) reload()
+        }
+    }
+
+    Process {
+        id: usageGuard
+        onExited: function (code) {
+            root.usageGuardRunning = false
+            if (code !== 0) return
+            root.usagePrivate = true
+            if (root.usageDirty) root.saveUsage()
+        }
     }
 
     FileView {
@@ -733,6 +765,7 @@ Item {
     }
 
     Component.onCompleted: {
+        root.ensureUsagePrivate()
         root.refreshClock()
         root.refreshAddress()
     }
